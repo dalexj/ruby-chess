@@ -1,5 +1,6 @@
 require_relative 'rules/rook'
 require_relative 'rules/knight'
+require_relative 'rules/bishop'
 
 class MoveRules
   def self.legal_move?(piece, board, desired_location)
@@ -11,8 +12,8 @@ class MoveRules
       Knight.can_move?(piece, board, desired_location)
     when :rook
       Rook.can_move?(piece, board, desired_location)
-    # when :bishop
-    #   bishop_can_move?(piece, board, desired_location)
+    when :bishop
+      Bishop.can_move?(piece, board, desired_location)
     else
       true
     end
@@ -20,10 +21,6 @@ class MoveRules
 
   def self.same_color?(piece, other_piece)
     other_piece && piece.color == other_piece.color
-  end
-
-  def self.bishop_can_move?(piece, board, desired_location)
-
   end
 
 end

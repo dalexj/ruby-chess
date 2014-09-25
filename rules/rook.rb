@@ -1,7 +1,7 @@
 class Rook
   def self.can_move?(piece, board, desired_location)
     row = piece.location =~ Regexp.new("[#{desired_location}]")
-    return false if row.nil?
+    return false unless row
     !piece_in_way?(piece, board, desired_location)
   end
 
