@@ -1,7 +1,7 @@
 require_relative 'piece'
+require_relative 'move_rules'
 
 class Board
-
   attr_reader :pieces
 
   def initialize
@@ -19,18 +19,19 @@ class Board
   def set_pawns(color, rank)
     ("A".."H").each do |file|
       pawn = Piece.new(color, :pawn)
-      pawn.place_at("#{file}#{rank}")
+      pawn.location = "#{file}#{rank}"
       @pieces << pawn
     end
   end
 
   def set_back_row(color, rank)
-    order = ("A".."H").to_a.zip([:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook])
+    order = ("A".."H").to_a.zip(
+      [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook])
     order.each do |pair|
       file = pair[0]
       piece_type = pair[1]
       piece = Piece.new(color, piece_type)
-      piece.place_at("#{file}#{rank}")
+      piece.location = "#{file}#{rank}"
       @pieces << piece
     end
   end
@@ -39,8 +40,26 @@ class Board
     pieces.find { |piece| piece.location == location }
   end
 
+  def move(start_location, end_location)
+    piece_to_move = piece_at(start_location)
+    piece_taken = piece_at(end_location)
+
+    return if piece_to_move.nil? || start_location == end_location
+    unless MoveRules.legal_move?(piece_to_move, self, end_location)
+      puts "illegal move"
+      return
+    end
+
+    if piece_taken
+      puts "taking piece"
+      take_piece(end_location)
+    end
+    piece_to_move.location = end_location
+  end
+
+  private
+
   def take_piece(location)
     pieces.reject! { |piece| piece.location == location }
   end
-
 end

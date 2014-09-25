@@ -1,17 +1,13 @@
 require 'gosu'
 
 class Piece
-
-  attr_reader :color, :piece_type, :location
+  attr_reader :color, :piece_type
+  attr_accessor :location
 
   def initialize(color, piece_type)
     @color = color
     @piece_type = piece_type
     @location = "A1"
-  end
-
-  def place_at(coordinates)
-    @location = coordinates
   end
 
   def promote(type)
@@ -24,9 +20,12 @@ class Piece
   end
 
   def to_array_indexes
+    Piece.location_to_array_indexes(location)
+  end
+
+  def self.location_to_array_indexes(location)
     row = 8 - location[1].to_i
     col = location[0].ord - 65
     [row, col]
   end
-
 end
