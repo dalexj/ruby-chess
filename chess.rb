@@ -5,7 +5,7 @@ require_relative 'board'
 class Chess < Gosu::Window
   def initialize
     super(720, 720, false)
-    self.caption = "Chess"
+    self.caption = "Alex's Swaggin' Chess"
     @board = Board.new
     @cursor = Gosu::Image.new(self, 'assets/mouse.png')
     create_images
@@ -19,6 +19,7 @@ class Chess < Gosu::Window
         @selected_piece = nil
       else
         @selected_piece = @board.piece_at(location_of_mouse)
+        MoveRules.print_legal_moves(@selected_piece, @board) if @selected_piece
       end
     end
   end

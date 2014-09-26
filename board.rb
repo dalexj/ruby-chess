@@ -54,6 +54,7 @@ class Board
       puts "taking piece"
       take_piece(end_location)
     end
+    piece_to_move.move
     piece_to_move.location = end_location
   end
 
