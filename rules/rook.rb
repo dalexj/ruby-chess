@@ -23,5 +23,4 @@ class Rook
   def self.range_bewteen(a, b)
     a > b ? (b..a) : (a..b)
   end
-
 end

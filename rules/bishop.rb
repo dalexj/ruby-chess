@@ -11,7 +11,7 @@ class Bishop
     end
   end
 
-  def self.squares_between(location_one, location_two)
+  def self.squares_between(location_one, location_two) # TODO: refactor
     direction = to_diagonal(location_one, location_two)
     return if direction.nil?
     squares = []
@@ -37,6 +37,3 @@ class Bishop
   end
 
 end
-
-Bishop.to_diagonal("D3", "A6")
-Bishop.squares_between("D3", "A6")
