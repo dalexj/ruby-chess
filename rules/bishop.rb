@@ -2,9 +2,7 @@ class Bishop
   def self.can_move?(piece, board, desired_location)
     diagonal = to_diagonal(piece.location, desired_location)
     return false unless diagonal
-    if piece_in_way?(piece, board, desired_location)
-      return false
-    end
+    !piece_in_way?(piece, board, desired_location)
   end
 
   def self.piece_in_way?(piece, board, desired_location)

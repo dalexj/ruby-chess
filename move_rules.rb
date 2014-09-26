@@ -1,6 +1,7 @@
 require_relative 'rules/rook'
 require_relative 'rules/knight'
 require_relative 'rules/bishop'
+require_relative 'rules/queen'
 
 class MoveRules
   def self.legal_move?(piece, board, desired_location)
@@ -14,6 +15,8 @@ class MoveRules
       Rook.can_move?(piece, board, desired_location)
     when :bishop
       Bishop.can_move?(piece, board, desired_location)
+    when :queen
+      Queen.can_move?(piece, board, desired_location)
     else
       true
     end
