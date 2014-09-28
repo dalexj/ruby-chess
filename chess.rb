@@ -1,13 +1,13 @@
 require 'rubygems'
 require 'gosu'
-require_relative 'board'
+require_relative 'game'
 
 class Chess < Gosu::Window
+  attr_reader :game
   def initialize
     super(720, 720, false)
     self.caption = "Alex's Swaggin' Chess"
-    @board = Board.new
-    @cursor = Gosu::Image.new(self, 'assets/mouse.png')
+    @game = Game.new
     create_images
   end
 
@@ -15,11 +15,11 @@ class Chess < Gosu::Window
     if id == Gosu::MsLeft
       case
       when @selected_piece
-        @board.move(@selected_piece.location, location_of_mouse)
+        game.move(@selected_piece.location, location_of_mouse)
         @selected_piece = nil
       else
-        @selected_piece = @board.piece_at(location_of_mouse)
-        MoveRules.print_legal_moves(@selected_piece, @board) if @selected_piece
+        @selected_piece = game.board.piece_at(location_of_mouse)
+        MoveRules.print_legal_moves(@selected_piece, game.board) if @selected_piece
       end
     end
   end
@@ -43,7 +43,7 @@ class Chess < Gosu::Window
     end
   end
 
-  def draw_pieces(pieces = @board.pieces)
+  def draw_pieces(pieces = game.board.pieces)
     piece_image_locations = %w(bb bk bn bp bq br wb wk wn wp wq wr)
     pieces.each do |piece|
       y, x = piece.to_array_indexes
@@ -57,6 +57,7 @@ class Chess < Gosu::Window
 
   def create_images
     piece_image_locations = %w(bb bk bn bp bq br wb wk wn wp wq wr)
+    @cursor = Gosu::Image.new(self, 'assets/mouse.png')
     @board_image = Gosu::Image.new(self, "assets/board.png", true)
     @piece_images = piece_image_locations.collect { |path| Gosu::Image.new(self, "assets/#{path}.png", true) }
   end

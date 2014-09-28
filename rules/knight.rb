@@ -6,4 +6,8 @@ class Knight
     difference = [rank_difference, file_difference]
     difference == [2, 1] || difference == [1, 2]
   end
+
+  def self.can_take?(piece, board, desired_location)
+    can_move?(piece, board, desired_location)
+  end
 end

@@ -7,7 +7,7 @@ class Piece
   def initialize(color, piece_type)
     @color = color
     @piece_type = piece_type
-    @location = "A1" 
+    @location = "A1"
   end
 
   def promote(type)

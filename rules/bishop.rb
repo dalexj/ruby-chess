@@ -36,4 +36,7 @@ class Bishop
     end
   end
 
+  def self.can_take?(piece, board, desired_location)
+    can_move?(piece, board, desired_location)
+  end
 end

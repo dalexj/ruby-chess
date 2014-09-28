@@ -15,12 +15,16 @@ class Rook
     row = location_one =~ Regexp.new("[#{location_two}]")
     return if row.nil?
     range = range_bewteen(location_one[1 - row], location_two[1 - row])
-    squares = range.collect{|col| "#{col}#{location_one[row]}"}
+    squares = range.collect { |col| "#{col}#{location_one[row]}" }
     squares.collect!(&:reverse) if row == 0
     squares[1..-2]
   end
 
   def self.range_bewteen(a, b)
     a > b ? (b..a) : (a..b)
+  end
+
+  def self.can_take?(piece, board, desired_location)
+    can_move?(piece, board, desired_location)
   end
 end
