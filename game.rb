@@ -7,6 +7,7 @@ class Game
 
   def initialize
     @board = Board.new
+    @turn = :white
     set_pieces
   end
 
@@ -42,6 +43,7 @@ class Game
     piece_taken = board.piece_at(end_location)
 
     return if piece_to_move.nil? || start_location == end_location
+    return unless @turn == piece_to_move.color
     unless MoveRules.legal_move?(piece_to_move, board, end_location)
       puts "illegal move"
       return
@@ -53,6 +55,7 @@ class Game
     end
     piece_to_move.move
     piece_to_move.location = end_location
+    @turn = [:black, :white].reject { |color| color == @turn }.first
   end
 
 end

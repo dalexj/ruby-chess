@@ -21,6 +21,11 @@ class MoveRules
   end
 
   def self.print_legal_moves(piece, board)
-    puts board_squares.select {|square| legal_move?(piece, board, square) }.join(" ")
+    puts get_legal_moves(piece, board).join(" ")
   end
+
+  def self.get_legal_moves(piece, board)
+    board_squares.select { |square| legal_move?(piece, board, square) }
+  end
+
 end

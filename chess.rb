@@ -19,7 +19,7 @@ class Chess < Gosu::Window
         @selected_piece = nil
       else
         @selected_piece = game.board.piece_at(location_of_mouse)
-        MoveRules.print_legal_moves(@selected_piece, game.board) if @selected_piece
+        @moves = MoveRules.get_legal_moves(@selected_piece, game.board) if @selected_piece
       end
     end
   end
@@ -37,7 +37,12 @@ class Chess < Gosu::Window
     case
     when @selected_piece
       piece_image_locations = %w(bb bk bn bp bq br wb wk wn wp wq wr)
-      @piece_images[piece_image_locations.index(@selected_piece.file_loc)].draw(self.mouse_x - 45, mouse_y - 45, 0)
+      image = @piece_images[piece_image_locations.index(@selected_piece.file_loc)]
+      @moves.each do |move|
+        y, x = Piece.location_to_array_indexes(move).collect { |index| index * 90 }
+        image.draw(x, y, 0, 1, 1, 0x33ffffff)
+      end
+      image.draw(self.mouse_x - 45, mouse_y - 45, 0)
     else
       @cursor.draw(self.mouse_x, self.mouse_y, 0)
     end
@@ -46,9 +51,7 @@ class Chess < Gosu::Window
   def draw_pieces(pieces = game.board.pieces)
     piece_image_locations = %w(bb bk bn bp bq br wb wk wn wp wq wr)
     pieces.each do |piece|
-      y, x = piece.to_array_indexes
-      x *= 90
-      y *= 90
+      y, x = piece.to_array_indexes.collect { |index| index * 90 }
       unless @selected_piece == piece
         @piece_images[piece_image_locations.index(piece.file_loc)].draw(x, y, 0)
       end
