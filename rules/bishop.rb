@@ -1,4 +1,8 @@
+require_relative 'calculations'
+
 class Bishop
+  include Calculations
+
   def self.can_move?(piece, board, desired_location)
     diagonal = to_diagonal(piece.location, desired_location)
     return false unless diagonal
@@ -25,15 +29,9 @@ class Bishop
   end
 
   def self.to_diagonal(location_one, location_two)
-    direction = location_difference(location_one, location_two)
+    direction = Calculations::location_difference(location_one, location_two)
     return nil unless direction.collect(&:abs).reduce(:==)
     direction.collect {|num| -(num / num.abs)}
-  end
-
-  def self.location_difference(location_one, location_two)
-    location_one.chars.zip(location_two.chars).collect do |pair|
-      pair.collect(&:ord).reduce(:-)
-    end
   end
 
   def self.can_take?(piece, board, desired_location)

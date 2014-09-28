@@ -1,3 +1,6 @@
+require_relative '../piece'
+require_relative '../board'
+
 class Pawn
   def self.can_move?(piece, board, desired_location)
     spaces = spaces_sideways(piece.location, desired_location)
@@ -15,10 +18,10 @@ class Pawn
     spaces == 1 || (!piece.moved? && spaces == 2)
   end
 
-  def self.can_take?(piece, board, desired_location)
+  def self.can_take?(piece, board, desired_location, for_check = false)
     return false unless spaces_sideways(piece.location, desired_location) == 1
     spaces = spaces_moving(piece, desired_location)
-    spaces == 1 && board.piece_at(desired_location)
+    spaces == 1 && (board.piece_at(desired_location) || for_check)
   end
 
   def self.spaces_moving(piece, desired_location)
@@ -31,3 +34,13 @@ class Pawn
     (location[0].ord - desired_location[0].ord).abs
   end
 end
+
+# board = Board.new
+# king = Piece.new(:white, :king)
+# king.location = "E5"
+# pawn = Piece.new(:black, :pawn)
+# pawn.location = "D7"
+# board.pieces << king
+# board.pieces << pawn
+#
+# Pawn.can_take?(pawn, board, "")
