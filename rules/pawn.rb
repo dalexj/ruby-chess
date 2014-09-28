@@ -7,7 +7,7 @@ class Pawn
     if spaces == 0
       can_move_forward?(piece, board, desired_location)
     elsif spaces == 1
-      can_take?(piece, board, desired_location)
+      can_take?(piece, board, desired_location) && board.piece_at(desired_location)
     end
   end
 
@@ -18,10 +18,10 @@ class Pawn
     spaces == 1 || (!piece.moved? && spaces == 2)
   end
 
-  def self.can_take?(piece, board, desired_location, for_check = false)
+  def self.can_take?(piece, board, desired_location)
     return false unless spaces_sideways(piece.location, desired_location) == 1
     spaces = spaces_moving(piece, desired_location)
-    spaces == 1 && (board.piece_at(desired_location) || for_check)
+    spaces == 1
   end
 
   def self.spaces_moving(piece, desired_location)

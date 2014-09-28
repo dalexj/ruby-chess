@@ -14,12 +14,10 @@ module King
     differences[0].abs <= 1 && differences[1].abs <= 1
   end
 
-  def self.in_check?(piece, board, location) # TODO: FIX PAWNS PUTTING KING IN CHECK
+  def self.in_check?(piece, board, location) 
     opponent_color = [:black, :white].reject { |color| color == piece.color }.first
     board.select_color(opponent_color).any? do |piece|
-      args = [piece, board, location]
-      args << true if piece.piece_type == :pawn
-      Kernel.const_get(piece.piece_type.capitalize).send :can_take?, *args
+      Kernel.const_get(piece.piece_type.capitalize).can_take?(piece, board, location)
     end
   end
 end
