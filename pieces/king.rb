@@ -1,9 +1,6 @@
-require_relative '../move_rules'
 require_relative 'calculations'
 
 class King < Piece
-  include Calculations
-
   def can_move?(board, desired_location)
     return false unless can_take?(board, desired_location)
     !in_check?(board, desired_location)

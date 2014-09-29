@@ -20,9 +20,8 @@ class Game
 
   def set_pawns(color, rank)
     ("A".."H").each do |file|
-      pawn = Piece.new(color, :pawn)
-      pawn.location = "#{file}#{rank}"
-      board.pieces << pawn
+      pawn = Piece.new(color, :pawn, "#{file}#{rank}")
+      board << pawn
     end
   end
 
@@ -32,9 +31,8 @@ class Game
     order.each do |pair|
       file = pair[0]
       piece_type = pair[1]
-      piece = Piece.new(color, piece_type)
-      piece.location = "#{file}#{rank}"
-      board.pieces << piece
+      piece = Piece.new(color, piece_type, "#{file}#{rank}")
+      board << piece
     end
   end
 
@@ -56,6 +54,16 @@ class Game
     piece_to_move.move
     piece_to_move.location = end_location
     @turn = [:black, :white].reject { |color| color == @turn }.first
+  end
+
+  def legal_move?(piece, desired_location)
+    other_piece = board.piece_at(desired_location)
+    return false if same_color?(piece, other_piece)
+    piece.can_move?(board, desired_location)
+  end
+
+  def same_color?(piece, other_piece)
+    other_piece && piece.color == other_piece.color
   end
 
 end

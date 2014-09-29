@@ -16,4 +16,8 @@ class Board
   def take_piece(location)
     pieces.delete_at pieces.index{ |piece| piece.location == location }
   end
+
+  def << (piece)
+    pieces << piece
+  end
 end
