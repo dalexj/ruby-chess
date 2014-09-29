@@ -4,10 +4,10 @@ class Piece
   attr_reader :color, :piece_type
   attr_accessor :location
 
-  def initialize(color, piece_type)
+  def initialize(color, piece_type, location = "A1")
     @color = color
     @piece_type = piece_type
-    @location = "A1"
+    @location = location
   end
 
   def promote(type)

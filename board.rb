@@ -14,6 +14,6 @@ class Board
   end
 
   def take_piece(location)
-    pieces.reject! { |piece| piece.location == location }
+    pieces.delete_at pieces.index{ |piece| piece.location == location }
   end
 end
