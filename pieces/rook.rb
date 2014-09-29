@@ -1,6 +1,10 @@
 require_relative 'calculations'
 
 class Rook < Piece
+  def initialize(color, location)
+    super(color, :rook, location)
+  end
+
   def can_move?(board, desired_location)
     row = location =~ Regexp.new("[#{desired_location}]")
     return false unless row

@@ -19,7 +19,7 @@ class Chess < Gosu::Window
         @selected_piece = nil
       else
         @selected_piece = game.board.piece_at(location_of_mouse)
-        @moves = MoveRules.get_legal_moves(@selected_piece, game.board) if @selected_piece
+        @moves = game.get_legal_moves(@selected_piece) if @selected_piece
       end
     end
   end

@@ -1,14 +1,18 @@
 require_relative 'calculations'
 
 class Bishop < Piece
+  def initialize(color, location)
+    super(color, :bishop, location)
+  end
+
   def can_move?(board, desired_location)
-    diagonal = to_diagonal(piece.location, desired_location)
+    diagonal = Calculations.to_diagonal(location, desired_location)
     return false unless diagonal
-    !piece_in_way?(piece, board, desired_location)
+    !piece_in_way?(board, desired_location)
   end
 
   def piece_in_way?(board, desired_location)
-    squares_between_diagonal(location, desired_location).any? do |square|
+    Calculations.squares_between_diagonal(location, desired_location).any? do |square|
       board.piece_at(square)
     end
   end

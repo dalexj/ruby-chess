@@ -1,6 +1,13 @@
 require_relative 'piece'
 require_relative 'board'
-require_relative 'move_rules'
+# require_relative 'move_rules'
+
+require_relative 'pieces/rook'
+require_relative 'pieces/knight'
+require_relative 'pieces/bishop'
+require_relative 'pieces/queen'
+require_relative 'pieces/king'
+require_relative 'pieces/pawn'
 
 class Game
   attr_reader :board
@@ -20,18 +27,18 @@ class Game
 
   def set_pawns(color, rank)
     ("A".."H").each do |file|
-      pawn = Piece.new(color, :pawn, "#{file}#{rank}")
+      pawn = Pawn.new(color, "#{file}#{rank}")
       board << pawn
     end
   end
 
   def set_back_row(color, rank)
     order = ("A".."H").to_a.zip(
-      [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook])
+      [:Rook, :Knight, :Bishop, :Queen, :King, :Bishop, :Knight, :Rook])
     order.each do |pair|
       file = pair[0]
-      piece_type = pair[1]
-      piece = Piece.new(color, piece_type, "#{file}#{rank}")
+      piece_type = Kernel.const_get(pair[1])
+      piece = piece_type.new(color, "#{file}#{rank}")
       board << piece
     end
   end
@@ -42,7 +49,7 @@ class Game
 
     return if piece_to_move.nil? || start_location == end_location
     return unless @turn == piece_to_move.color
-    unless MoveRules.legal_move?(piece_to_move, board, end_location)
+    unless legal_move?(piece_to_move, end_location)
       puts "illegal move"
       return
     end
@@ -64,6 +71,14 @@ class Game
 
   def same_color?(piece, other_piece)
     other_piece && piece.color == other_piece.color
+  end
+
+  def get_legal_moves(piece)
+    board_squares.select { |square| legal_move?(piece, square) }
+  end
+
+  def board_squares
+    ("A1".."H8").to_a.reject { |square| square =~ /\w[09]/ }
   end
 
 end

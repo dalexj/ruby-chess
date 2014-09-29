@@ -1,4 +1,8 @@
 class Pawn < Piece
+  def initialize(color, location)
+    super(color, :pawn, location)
+  end
+
   def can_move?(board, desired_location)
     spaces = spaces_sideways(desired_location)
     if spaces == 0
@@ -8,14 +12,14 @@ class Pawn < Piece
     end
   end
 
-  def self.can_move_forward?(board, desired_location)
+  def can_move_forward?(board, desired_location)
     return false if board.piece_at(desired_location)
     return false unless spaces_sideways(desired_location) == 0
     spaces = spaces_moving(desired_location)
-    spaces == 1 || (!piece.moved? && spaces == 2)
+    spaces == 1 || (!moved? && spaces == 2)
   end
 
-  def self.can_take?(board, desired_location)
+  def can_take?(board, desired_location)
     spaces_moving(desired_location) == 1 && spaces_sideways(desired_location) == 1
   end
 
