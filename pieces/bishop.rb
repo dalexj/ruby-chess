@@ -6,6 +6,7 @@ class Bishop < Piece
   end
 
   def can_move?(board, desired_location)
+    return false if desired_location == location
     diagonal = Calculations.to_diagonal(location, desired_location)
     return false unless diagonal
     !piece_in_way?(board, desired_location)

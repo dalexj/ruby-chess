@@ -15,10 +15,10 @@ class King < Piece
     differences[0].abs <= 1 && differences[1].abs <= 1
   end
 
-  def in_check?(board, location)
+  def in_check?(board, square = location, ignored_location = nil)
     opponent_color = [:black, :white].reject { |c| c == color }.first
     board.select_color(opponent_color).any? do |piece|
-      piece.can_take?(board, location)
+      piece.can_take?(board, square) unless ignored_location == piece.location
     end
   end
 end

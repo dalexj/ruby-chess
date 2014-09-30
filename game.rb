@@ -1,7 +1,5 @@
 require_relative 'piece'
 require_relative 'board'
-# require_relative 'move_rules'
-
 require_relative 'pieces/rook'
 require_relative 'pieces/knight'
 require_relative 'pieces/bishop'
@@ -16,6 +14,7 @@ class Game
     @board = Board.new
     @turn = :white
     set_pieces
+    select_kings
   end
 
   def set_pieces
@@ -66,7 +65,12 @@ class Game
   def legal_move?(piece, desired_location)
     other_piece = board.piece_at(desired_location)
     return false if same_color?(piece, other_piece)
-    piece.can_move?(board, desired_location)
+    return false unless piece.can_move?(board, desired_location)
+    temp = piece.location
+    piece.location = desired_location
+    check = @kings[@turn].in_check?(board, @kings[@turn].location, desired_location)
+    piece.location = temp
+    !check
   end
 
   def same_color?(piece, other_piece)
@@ -79,6 +83,10 @@ class Game
 
   def board_squares
     ("A1".."H8").to_a.reject { |square| square =~ /\w[09]/ }
+  end
+
+  def select_kings
+    @kings = {white: board.piece_at("E1"), black: board.piece_at("E8")}
   end
 
 end
