@@ -2,7 +2,7 @@ require_relative 'calculations'
 
 class Bishop < Piece
   def initialize(color, location)
-    super(color, :bishop, location)
+    super(color, location)
   end
 
   def can_move?(board, desired_location)

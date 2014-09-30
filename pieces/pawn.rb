@@ -1,6 +1,6 @@
 class Pawn < Piece
   def initialize(color, location)
-    super(color, :pawn, location)
+    super(color, location)
   end
 
   def can_move?(board, desired_location)

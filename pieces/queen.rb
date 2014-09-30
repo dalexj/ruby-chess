@@ -3,7 +3,7 @@ require_relative 'rook'
 
 class Queen < Piece
   def initialize(color, location)
-    super(color, :queen, location)
+    super(color, location)
   end
 
   def can_move?(board, desired_location)

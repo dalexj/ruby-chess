@@ -1,21 +1,20 @@
 require 'gosu'
 
 class Piece
-  attr_reader :color, :piece_type
+  attr_reader :color
   attr_accessor :location
 
-  def initialize(color, piece_type, location = "A1")
+  def initialize(color, location = "A1")
     @color = color
-    @piece_type = piece_type
     @location = location
   end
 
   def promote(type)
-    @piece_type = type if piece_type == :pawn
+    @piece_type = type
   end
 
   def file_loc
-    type = piece_type == :knight ? "n" : piece_type[0]
+    type = self.class == Knight ? "n" : self.class.to_s[0].downcase
     color[0] + type
   end
 

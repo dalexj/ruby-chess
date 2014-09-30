@@ -13,13 +13,15 @@ class Chess < Gosu::Window
 
   def button_down(id)
     if id == Gosu::MsLeft
-      case
-      when @selected_piece
+      if @selected_piece
         game.move(@selected_piece.location, location_of_mouse)
         @selected_piece = nil
       else
         @selected_piece = game.board.piece_at(location_of_mouse)
-        @moves = game.get_legal_moves(@selected_piece) if @selected_piece
+        if @selected_piece
+          @moves = game.get_legal_moves(@selected_piece)
+          puts @selected_piece.class.to_s[0]
+        end
       end
     end
   end
