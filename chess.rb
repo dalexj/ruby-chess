@@ -30,8 +30,8 @@ class Chess < Gosu::Window
   def draw
     @board_image.draw(0, 0, 0)
     draw_pieces
-    draw_cursor
     draw_possible_moves
+    draw_cursor
   end
 
   def draw_cursor

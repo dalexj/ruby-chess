@@ -4,11 +4,11 @@ require_relative 'pieces/calculations'
 
 class Game
   include Calculations
+  include LegalMoveChecker
 
   attr_reader :board
 
   def initialize
-    # @move_checker = LegalMoveChecker.new
     restart
   end
 
@@ -22,8 +22,8 @@ class Game
   def move(start_location, end_location)
     piece_to_move = board.piece_at(start_location)
     piece_taken = board.piece_at(end_location)
-
-    return unless piece_to_move && @turn == piece_to_move.color
+# =============================================================== REMOVE ONCE DONE TESTING
+    return unless piece_to_move # && @turn == piece_to_move.color
     return if piece_to_move.location == end_location
 
     unless legal_move?(piece_to_move, end_location)
@@ -34,30 +34,12 @@ class Game
     if piece_taken
       puts "taking piece"
       board.take_piece(end_location)
-    # elsif can_castle?(piece, desired_location)
-    #   castle(piece, desired_location)
+    elsif can_castle?(piece_to_move, end_location)
+      castle(piece_to_move, end_location)
     end
-    piece_to_move.move
     piece_to_move.location = end_location
+    piece_to_move.move
     change_turns
-  end
-
-  def legal_move?(piece, desired_location)
-    return false if piece.location == desired_location
-    other_piece = board.piece_at(desired_location)
-    return false if same_color?(piece, other_piece)
-    return false unless piece.can_move?(desired_location) # || can_castle?(piece, desired_location)
-    # return false if still_in_check(piece, desired_location)
-    return false if piece_in_way?(piece, desired_location)
-    true
-  end
-
-  def still_in_check(piece, desired_location)
-    temp = piece.location
-    piece.location = desired_location
-    check = @kings[@turn].in_check?(board, @kings[@turn].location, desired_location)
-    piece.location = temp
-    check
   end
 
   def same_color?(piece, other_piece)
@@ -68,7 +50,7 @@ class Game
     board_squares.select { |square| legal_move?(piece, square) }
   end
 
-  def has_legal_moves?(color) # TODO: ALL OF THIS
+  def in_checkmate?(color) # TODO: ALL OF THIS
   end
 
   def select_kings
@@ -80,37 +62,18 @@ class Game
               black: [board.piece_at("A8"), board.piece_at("H8")]}
   end
 
-  def piece_in_way?(piece, desired_location)
-    return false unless [Rook, Bishop, Queen].include?(piece.class)
-    squares_between(piece.location, desired_location).any? do |square|
-      board.piece_at(square)
-    end
-  end
-
   def change_turns
-    @turn = [:black, :white].reject { |color| color == @turn }.first
+    @turn = other_color(@turn)
   end
 
-  def can_castle?(king, desired_location)
-    return false unless king.class == King
-    rook_to_castle = find_rook_can_castle(king, desired_location)
-    return false unless rook_to_castle && king_moving_two_spots(king.location, desired_location)
-    return false if in_check?(king, )
-  end
-
-  def find_rook_can_castle(king, desired_location)
-    @rooks[king.color].find do |rook|
-      !king.moved? && !rook.moved? &&
-      correct_rook?(king.location, rook.location, desired_location)
-    end
+  def other_color(your_color)
+    [:black, :white].find { |color| color != your_color }
   end
 
   def castle(king, desired_location)
-
+    puts "castling"
+    rook = find_rook_can_castle(king, desired_location)
+    rook.location = square_next_to_king(king.location, rook.location)
+    rook.move
   end
-
-  def in_check?(color)
-    other_color(color)
-  end
-
 end
