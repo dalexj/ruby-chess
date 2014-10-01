@@ -1,5 +1,3 @@
-require 'gosu'
-
 class Piece
   attr_reader :color
   attr_accessor :location

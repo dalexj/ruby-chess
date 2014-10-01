@@ -8,7 +8,6 @@ require_relative 'pieces/king'
 require_relative 'pieces/pawn'
 
 class BoardGenerator
-
   def create
     @board = Board.new
     set_pieces
@@ -23,20 +22,16 @@ class BoardGenerator
   end
 
   def set_pawns(color, rank)
-    ("A".."H").each do |file|
-      pawn = Pawn.new(color, "#{file}#{rank}")
-      @board << pawn
+    @board << ("A".."H").collect do |file|
+      Pawn.new(color, "#{file}#{rank}")
     end
   end
 
   def set_back_row(color, rank)
     order = ("A".."H").to_a.zip(
       [:Rook, :Knight, :Bishop, :Queen, :King, :Bishop, :Knight, :Rook])
-    order.each do |pair|
-      file = pair[0]
-      piece_type = Kernel.const_get(pair[1])
-      piece = piece_type.new(color, "#{file}#{rank}")
-      @board << piece
+    @board << order.collect do |pair|
+      Kernel.const_get(pair[1]).new(color, "#{pair[0]}#{rank}")
     end
   end
 end

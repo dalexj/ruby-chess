@@ -18,7 +18,7 @@ class Board
     pieces.delete_at index if index
   end
 
-  def << (piece)
-    pieces << piece
+  def << (pieces_to_add)
+    pieces[pieces.length, pieces_to_add.length] = pieces_to_add
   end
 end

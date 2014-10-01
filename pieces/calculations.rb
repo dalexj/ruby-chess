@@ -36,4 +36,8 @@ module Calculations
     return nil unless direction.collect(&:abs).reduce(:==)
     direction.collect {|num| -(num / num.abs)}
   end
+
+  def self.board_squares
+    ("A1".."H8").to_a.reject { |square| square =~ /\w[09]/ }
+  end
 end
