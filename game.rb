@@ -13,6 +13,7 @@ class Game
   end
 
   def restart
+    @last_move = ["A1","A1"]
     @board = BoardGenerator.new.create
     @turn = :white
     select_kings
@@ -22,24 +23,26 @@ class Game
   def move(start_location, end_location)
     piece_to_move = board.piece_at(start_location)
     piece_taken = board.piece_at(end_location)
-# =============================================================== REMOVE ONCE DONE TESTING
-    return unless piece_to_move # && @turn == piece_to_move.color
+    return unless piece_to_move && @turn == piece_to_move.color
     return if piece_to_move.location == end_location
 
     unless legal_move?(piece_to_move, end_location)
       puts "illegal move"
       return
     end
-
     if piece_taken
       puts "taking piece"
       board.take_piece(end_location)
+    elsif can_en_passant?(piece_to_move, end_location)
+      puts "taking piece"
+      board.take_piece(@last_move[1])
     elsif can_castle?(piece_to_move, end_location)
       castle(piece_to_move, end_location)
     end
     piece_to_move.location = end_location
     piece_to_move.move
     change_turns
+    @last_move = [start_location, end_location]
   end
 
   def same_color?(piece, other_piece)

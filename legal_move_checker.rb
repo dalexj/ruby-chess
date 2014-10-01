@@ -7,7 +7,7 @@ module LegalMoveChecker
     if other_piece
       return false unless piece.can_take?(desired_location)
     else
-      return false unless piece.can_move?(desired_location) || can_castle?(piece, desired_location)
+      return false unless piece.can_move?(desired_location) || can_castle?(piece, desired_location) || can_en_passant?(piece, desired_location)
     end
     return false if still_in_check(piece, desired_location)
     return false if piece_in_way?(piece, desired_location)
@@ -43,9 +43,21 @@ module LegalMoveChecker
   end
 
   def piece_in_way?(piece, desired_location)
-    return false unless [Rook, Bishop, Queen].include?(piece.class)
-    squares_between(piece.location, desired_location).any? do |square|
+    return false unless [Rook, Bishop, Queen, Pawn].include?(piece.class)
+    squares = squares_between(piece.location, desired_location)
+    return unless squares
+    squares.any? do |square|
       board.piece_at(square)
     end
+  end
+
+  def can_en_passant?(piece, desired_location)
+    return false unless piece.class == Pawn
+    return false unless last_move_two_spaces?
+    return false unless piece.can_take?(desired_location)
+    other_piece = board.piece_at(@last_move[1])
+    return false unless other_piece.class == Pawn
+    return false if other_piece.color == piece.color
+    squares_between(*@last_move).include?(desired_location)
   end
 end

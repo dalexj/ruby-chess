@@ -13,6 +13,10 @@ class Chess < Gosu::Window
 
   def button_down(id)
     return unless id == Gosu::MsLeft
+    if location_of_mouse == "H6"
+      require 'pry'
+      binding.pry
+    end
     if @selected_piece
       game.move(@selected_piece.location, location_of_mouse)
       @selected_piece = nil

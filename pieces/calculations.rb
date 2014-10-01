@@ -59,4 +59,14 @@ module Calculations
   def king_moving_two_spots?(king_location, desired_location)
     [2, 0] == location_difference(king_location, desired_location).collect(&:abs)
   end
+
+  def spaces_moving_pawn(location, desired_location)
+    spaces = location_difference(location, desired_location)[1]
+    spaces *= -1 if color == :white
+    spaces
+  end
+
+  def last_move_two_spaces?
+    [0, 2] == location_difference(*@last_move).collect(&:abs)
+  end
 end
