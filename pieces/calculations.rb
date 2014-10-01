@@ -5,6 +5,11 @@ module Calculations
     end
   end
 
+  def self.squares_between(location_one, location_two)
+    squares_between_row(location_one, location_two) ||
+    squares_between_diagonal(location_one, location_two)
+  end
+
   def self.squares_between_row(location_one, location_two)
     row = location_one =~ Regexp.new("[#{location_two}]")
     return if row.nil?
@@ -39,5 +44,19 @@ module Calculations
 
   def self.board_squares
     ("A1".."H8").to_a.reject { |square| square =~ /\w[09]/ }
+  end
+
+  def self.square_next_to_king(king_location, rook_location)
+    squares_between(king_location, rook_location).find do |square|
+      location_difference(square, king_location)[0].abs == 1
+    end
+  end
+
+  def self.correct_rook?(king_location, rook_location, desired_location)
+    squares_between(king_location, rook_location).include?(desired_location)
+  end
+
+  def self.king_moving_two_spots?(king_location, desired_location)
+    [2, 0] == Calculations.location_difference(king_location, desired_location).collect(&:abs)
   end
 end

@@ -1,10 +1,12 @@
 require_relative 'board_generator'
+require_relative 'legal_move_checker'
 require_relative 'pieces/calculations'
 
 class Game
   attr_reader :board
 
   def initialize
+    @move_checker = LegalMoveChecker.new
     restart
   end
 
@@ -19,8 +21,9 @@ class Game
     piece_to_move = board.piece_at(start_location)
     piece_taken = board.piece_at(end_location)
 
-    return if piece_to_move.nil? || start_location == end_location
-    return unless @turn == piece_to_move.color
+    return unless piece_to_move && @turn == piece_to_move.color
+    return if piece_to_move.location == end_location
+
     unless legal_move?(piece_to_move, end_location)
       puts "illegal move"
       return
@@ -29,25 +32,25 @@ class Game
     if piece_taken
       puts "taking piece"
       board.take_piece(end_location)
-    end
-    rook = can_castle?(piece_to_move, end_location)
-    if rook
-      rook.location = Calculations.squares_between_row(piece_to_move.location, end_location)[0]
+    # elsif can_castle?(piece, desired_location)
+    #   castle(piece, desired_location)
     end
     piece_to_move.move
     piece_to_move.location = end_location
-    @turn = [:black, :white].reject { |color| color == @turn }.first
+    change_turns
   end
 
   def legal_move?(piece, desired_location)
+    return false if piece.location == desired_location
     other_piece = board.piece_at(desired_location)
     return false if same_color?(piece, other_piece)
-    return false unless piece.can_move?(board, desired_location) || can_castle?(piece, desired_location)
-    return false if check(piece, desired_location)
+    return false unless piece.can_move?(desired_location) # || can_castle?(piece, desired_location)
+    # return false if still_in_check(piece, desired_location)
+    return false if piece_in_way?(piece, desired_location)
     true
   end
 
-  def check(piece, desired_location)
+  def still_in_check(piece, desired_location)
     temp = piece.location
     piece.location = desired_location
     check = @kings[@turn].in_check?(board, @kings[@turn].location, desired_location)
@@ -75,13 +78,37 @@ class Game
               black: [board.piece_at("A8"), board.piece_at("H8")]}
   end
 
+  def piece_in_way?(piece, desired_location)
+    return false unless [Rook, Bishop, Queen].include?(piece.class)
+    Calculations.squares_between(piece.location, desired_location).any? do |square|
+      board.piece_at(square)
+    end
+  end
+
+  def change_turns
+    @turn = [:black, :white].reject { |color| color == @turn }.first
+  end
+
   def can_castle?(king, desired_location)
     return false unless king.class == King
-    rook_to_castle = @rooks[king.color].find do |rook|
-      king.can_castle?(board, rook.location)
+    rook_to_castle = find_rook_can_castle(king, desired_location)
+    return false unless rook_to_castle && Calculations.king_moving_two_spots(king.location, desired_location)
+    return false if in_check?(king, )
+  end
+
+  def find_rook_can_castle(king, desired_location)
+    @rooks[king.color].find do |rook|
+      !king.moved? && !rook.moved? &&
+      Calculations.correct_rook?(king.location, rook.location, desired_location)
     end
-    return false unless rook_to_castle
-    rook_to_castle if [2, 0] == Calculations.location_difference(king.location, desired_location).collect(&:abs)
+  end
+
+  def castle(king, desired_location)
+
+  end
+
+  def in_check?(color)
+    other_color(color)
   end
 
 end

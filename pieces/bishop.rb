@@ -5,20 +5,11 @@ class Bishop < Piece
     super(color, location)
   end
 
-  def can_move?(board, desired_location)
-    return false if desired_location == location
-    diagonal = Calculations.to_diagonal(location, desired_location)
-    return false unless diagonal
-    !piece_in_way?(board, desired_location)
+  def can_move?(desired_location)
+    Calculations.to_diagonal(location, desired_location)
   end
 
-  def piece_in_way?(board, desired_location)
-    Calculations.squares_between_diagonal(location, desired_location).any? do |square|
-      board.piece_at(square)
-    end
-  end
-
-  def can_take?(board, desired_location)
-    can_move?(board, desired_location)
+  def can_take?(target_location)
+    can_move?(target_location)
   end
 end
