@@ -3,10 +3,12 @@ require_relative 'legal_move_checker'
 require_relative 'pieces/calculations'
 
 class Game
+  include Calculations
+
   attr_reader :board
 
   def initialize
-    @move_checker = LegalMoveChecker.new
+    # @move_checker = LegalMoveChecker.new
     restart
   end
 
@@ -63,7 +65,7 @@ class Game
   end
 
   def get_legal_moves(piece)
-    Calculations.board_squares.select { |square| legal_move?(piece, square) }
+    board_squares.select { |square| legal_move?(piece, square) }
   end
 
   def has_legal_moves?(color) # TODO: ALL OF THIS
@@ -80,7 +82,7 @@ class Game
 
   def piece_in_way?(piece, desired_location)
     return false unless [Rook, Bishop, Queen].include?(piece.class)
-    Calculations.squares_between(piece.location, desired_location).any? do |square|
+    squares_between(piece.location, desired_location).any? do |square|
       board.piece_at(square)
     end
   end
@@ -92,14 +94,14 @@ class Game
   def can_castle?(king, desired_location)
     return false unless king.class == King
     rook_to_castle = find_rook_can_castle(king, desired_location)
-    return false unless rook_to_castle && Calculations.king_moving_two_spots(king.location, desired_location)
+    return false unless rook_to_castle && king_moving_two_spots(king.location, desired_location)
     return false if in_check?(king, )
   end
 
   def find_rook_can_castle(king, desired_location)
     @rooks[king.color].find do |rook|
       !king.moved? && !rook.moved? &&
-      Calculations.correct_rook?(king.location, rook.location, desired_location)
+      correct_rook?(king.location, rook.location, desired_location)
     end
   end
 
