@@ -1,5 +1,3 @@
-require_relative 'calculations'
-
 class King < Piece
   include Calculations
 
