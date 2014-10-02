@@ -1,3 +1,5 @@
+require_relative 'calculations'
+
 class Bishop < Piece
   include Calculations
 
