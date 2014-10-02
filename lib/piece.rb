@@ -7,12 +7,8 @@ class Piece
     @location = location
   end
 
-  def promote(type)
-    @piece_type = type
-  end
-
-  def file_loc
-    type = self.class == Knight ? "n" : self.class.to_s[0].downcase
+  def file_loc # TODO: change to some piece_type method for each child
+    type = self.class.to_s == "Knight" ? "n" : self.class.to_s[0].downcase
     color[0] + type
   end
 
