@@ -23,12 +23,8 @@ class BishopTest < Minitest::Test
 
   def test_can_take_same_as_can_move
     assert @bishop.can_take?("A1")
-    assert @bishop.can_take?("H8")
-    assert @bishop.can_take?("H2")
     assert @bishop.can_take?("B8")
     refute @bishop.can_take?("A2")
-    refute @bishop.can_take?("H7")
-    refute @bishop.can_take?("H3")
     refute @bishop.can_take?("B7")
   end
 end
