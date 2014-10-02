@@ -24,7 +24,9 @@ module LegalMoveChecker
 
   def in_check?(color, ignore_location)
     board.select_color(other_color(color)).any? do |piece|
-      piece.can_take?(@kings[color].location) unless ignore_location == piece.location
+      unless ignore_location == piece.location || piece_in_way?(piece, @kings[color].location)
+        piece.can_take?(@kings[color].location)
+      end
     end
   end
 
