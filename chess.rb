@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'gosu'
-require_relative 'game'
+require_relative 'lib/game'
+require_relative 'lib/select_promotion'
 
 class Chess < Gosu::Window
   attr_reader :game
@@ -78,5 +79,4 @@ class Chess < Gosu::Window
   end
 end
 
-window = Chess.new
-window.show
+Chess.new.show
