@@ -19,6 +19,10 @@ class Board
   end
 
   def << (pieces_to_add)
-    pieces[pieces.length, pieces_to_add.length] = pieces_to_add
+    if pieces_to_add.class == Array
+      pieces[pieces.length, pieces_to_add.length] = pieces_to_add
+    else
+      pieces << pieces_to_add
+    end
   end
 end
