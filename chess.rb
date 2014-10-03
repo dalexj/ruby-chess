@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'gosu'
 require_relative 'lib/game'
 require_relative 'lib/select_promotion'
@@ -26,6 +25,8 @@ class Chess < Gosu::Window
   end
 
   def update
+    # loser = [:black, :white].select { |color| game.in_checkmate?(color) }
+    # puts "#{loser} lost" unless loser.empty?
   end
 
   def draw
@@ -54,7 +55,11 @@ class Chess < Gosu::Window
   def draw_pieces(pieces = game.board.pieces.reject { |piece| piece == @selected_piece} )
     pieces.each do |piece|
       y, x = piece.to_array_indexes.collect { |index| index * 90 }
-      find_piece_image(piece).draw(x, y, 0)
+      unless @selected_piece && @moves.include?(piece.location)
+        find_piece_image(piece).draw(x, y, 0)
+      else
+        find_piece_image(piece).draw(x, y, 0, 1, 1, 0x33ffffff)
+      end
     end
   end
 

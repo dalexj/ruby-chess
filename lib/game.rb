@@ -8,13 +8,14 @@ class Game
 
   attr_reader :board
 
-  def initialize
+  def initialize(generator = BoardGenerator.new)
+    @generator = generator
     restart
   end
 
   def restart
     @last_move = ["A1","A1"]
-    @board = BoardGenerator.new.create
+    @board = @generator.create
     @turn = :white
     select_kings
     select_rooks
@@ -43,6 +44,7 @@ class Game
     piece_to_move.move
     change_turns
     @last_move = [start_location, end_location]
+    promote_pawn(piece_to_move)
   end
 
   def same_color?(piece, other_piece)
@@ -53,7 +55,8 @@ class Game
     board_squares.select { |square| legal_move?(piece, square) }
   end
 
-  def in_checkmate?(color) # TODO: ALL OF THIS
+  def in_checkmate?(color)
+    board.select_color(color).all? { |piece| get_legal_moves(piece).empty? }
   end
 
   def select_kings
@@ -79,4 +82,11 @@ class Game
     rook.location = square_next_to_king(king.location, rook.location)
     rook.move
   end
+
+  def promote_pawn(pawn)
+    return unless pawn.class == Pawn && ["8", "1"].include?(pawn.location[1])
+    board.take_piece(pawn.location)
+    board << [Rook, Bishop, Queen, Knight][rand(4)].new(pawn.color, pawn.location)
+  end
+
 end
