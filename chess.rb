@@ -33,14 +33,16 @@ class Chess < Gosu::Window
     @board_image.draw(0, 0, 0)
     draw_pieces
     draw_possible_moves
-    draw_cursor
+    draw_selected_piece
   end
 
-  def draw_cursor
+  def needs_cursor?
+    true
+  end
+
+  def draw_selected_piece
     if @selected_piece
       find_piece_image(@selected_piece).draw(self.mouse_x - 45, mouse_y - 45, 0)
-    else
-      @cursor.draw(self.mouse_x, self.mouse_y, 0)
     end
   end
 
