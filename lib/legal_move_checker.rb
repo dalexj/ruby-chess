@@ -36,7 +36,7 @@ module LegalMoveChecker
     return false unless rook_to_castle && king_moving_two_spots?(king.location, desired_location)
     return false if in_check?(king.color)
     squares_between(king.location, rook_to_castle.location).none? do |square|
-      still_in_check?(king, square)
+      still_in_check?(king, square) || board.piece_at(square)
     end
   end
 

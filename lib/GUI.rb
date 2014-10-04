@@ -70,7 +70,7 @@ class GUI < Gosu::Window
     @moves.each do |move|
       y, x = Piece.location_to_array_indexes(move).collect { |index| index * 90 }
       if game.board.piece_at(move)
-        transparency = 0x88ff5555
+        transparency = 0x88ffffff # TODO: FIGURE OUT TURNING BLACK TO RED
       else
         transparency = 0x33ffffff
       end
