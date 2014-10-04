@@ -9,28 +9,27 @@ require_relative 'pieces/pawn'
 
 class BoardGenerator
   def create
-    @board = Board.new
-    set_pieces
-    @board
+    set_pieces(Board.new)
   end
 
-  def set_pieces
-    set_back_row(:black, 8)
-    set_pawns(:black, 7)
-    set_pawns(:white, 2)
-    set_back_row(:white, 1)
+  def set_pieces(board)
+    set_back_row(board, :black, 8)
+    set_pawns(board, :black, 7)
+    set_pawns(board, :white, 2)
+    set_back_row(board, :white, 1)
+    board
   end
 
-  def set_pawns(color, rank)
-    @board << ("A".."H").collect do |file|
+  def set_pawns(board, color, rank)
+    board << ("A".."H").collect do |file|
       Pawn.new(color, "#{file}#{rank}")
     end
   end
 
-  def set_back_row(color, rank)
+  def set_back_row(board, color, rank)
     order = ("A".."H").to_a.zip(
       [:Rook, :Knight, :Bishop, :Queen, :King, :Bishop, :Knight, :Rook])
-    @board << order.collect do |pair|
+    board << order.collect do |pair|
       Kernel.const_get(pair[1]).new(color, "#{pair[0]}#{rank}")
     end
   end
