@@ -1,6 +1,5 @@
 require 'gosu'
 require_relative 'game'
-require_relative 'select_promotion'
 
 class GUI < Gosu::Window
   attr_reader :game
@@ -56,7 +55,7 @@ class GUI < Gosu::Window
   end
 
   def needs_cursor?
-    true
+    @selected_piece.nil?
   end
 
   def draw_selected_piece

@@ -90,7 +90,7 @@ class Game
   end
 
   def promote_pawn(new_piece_type)
-    return unless turn.to_s.include?("promotion")
+    return unless turn.to_s.include?("_promotion")
     @turn = turn.to_s.split("_")[0].to_sym
     board << new_piece_type.new(board.take_piece(@last_move[1]).color, @last_move[1])
     change_turns
