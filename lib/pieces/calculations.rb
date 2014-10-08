@@ -66,7 +66,7 @@ module Calculations
     spaces
   end
 
-  def last_move_two_spaces?
-    [0, 2] == location_difference(*@last_move).collect(&:abs)
+  def other_color(your_color)
+    your_color == :white ? :black : :white
   end
 end

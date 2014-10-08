@@ -1,10 +1,21 @@
-module LegalMoveChecker
+class LegalMoveChecker
+  include Calculations
+
+  attr_accessor :last_move
+
+  def initialize(board)
+    @board = board
+    @last_move = ["A1", "A1"]
+
+    select_kings
+    select_rooks
+  end
 
   def legal_move?(piece, desired_location)
     return false if piece.location == desired_location
-    other_piece = board.piece_at(desired_location)
+    other_piece = board.piece_at(desired_location) || NullPiece.new
     return false if same_color?(piece, other_piece)
-    if other_piece
+    unless other_piece.class == NullPiece
       return false unless piece.can_take?(desired_location)
     else
       return false unless piece.can_move?(desired_location) || can_castle?(piece, desired_location) || can_en_passant?(piece, desired_location)
@@ -65,4 +76,25 @@ module LegalMoveChecker
     return false if other_piece.color == piece.color
     squares_between(*@last_move).include?(desired_location)
   end
+
+  def same_color?(piece, other_piece)
+    piece.color == other_piece.color
+  end
+
+  def last_move_two_spaces?
+    [0, 2] == location_difference(*@last_move).collect(&:abs)
+  end
+
+  def select_kings
+    @kings = {white: board.piece_at("E1"), black: board.piece_at("E8")}
+  end
+
+  def select_rooks
+    @rooks = {white: [board.piece_at("A1"), board.piece_at("H1")],
+              black: [board.piece_at("A8"), board.piece_at("H8")]}
+  end
+
+  private
+
+  attr_reader :board
 end

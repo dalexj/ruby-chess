@@ -15,7 +15,10 @@ class Board
 
   def take_piece(location)
     index = pieces.index{ |piece| piece.location == location }
-    pieces.delete_at index if index
+    if index
+      pieces.delete_at index
+      puts "taking piece"
+    end
   end
 
   def << (pieces_to_add)
