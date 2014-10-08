@@ -116,7 +116,6 @@ class GUI < Gosu::Window
       add_to = -5
       pieces.reverse!
     end
-    puts location_of_mouse[1].to_i
     game.promote_pawn(pieces[location_of_mouse[1].to_i + add_to])
   end
 end
