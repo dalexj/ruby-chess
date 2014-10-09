@@ -16,14 +16,21 @@ class GUI < Gosu::Window
     if game.waiting_for_promotion?
       select_promotion_piece
     elsif @selected_piece
-      game.move(@selected_piece.location, location_of_mouse)
-      @selected_piece = nil
+      make_move
     else
-      @selected_piece = game.board.piece_at(location_of_mouse)
-      if @selected_piece
-        @moves = game.get_legal_moves(@selected_piece)
-      end
+      pick_up_piece
     end
+  end
+
+  def make_move
+    game.move(@selected_piece.location, location_of_mouse)
+    @selected_piece = nil
+  end
+
+  def pick_up_piece
+    @selected_piece = game.get_piece(location_of_mouse)
+    @selected_piece = nil if @selected_piece.instance_of? NullPiece
+    @moves = game.get_legal_moves(@selected_piece) if @selected_piece
   end
 
   def update
@@ -108,7 +115,7 @@ class GUI < Gosu::Window
   end
 
   def select_promotion_piece
-    return unless location_of_mouse[0] == "I"
+    return unless location_of_mouse[0] == "I" # grey strip to the right of board
     pieces = [Queen, Rook, Bishop, Knight]
     if game.turn.to_s.split("_")[0].to_sym == :white
       add_to = -1
@@ -116,6 +123,7 @@ class GUI < Gosu::Window
       add_to = -5
       pieces.reverse!
     end
-    game.promote_pawn(pieces[location_of_mouse[1].to_i + add_to])
+    type = pieces[location_of_mouse[1].to_i + add_to]
+    game.promote_pawn(type) if type
   end
 end

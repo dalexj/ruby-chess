@@ -82,7 +82,7 @@ class LegalMoveChecker
   end
 
   def last_move_two_spaces?
-    [0, 2] == location_difference(*@last_move).collect(&:abs)
+    [0, 2] == location_difference(*last_move).collect(&:abs)
   end
 
   def select_kings
