@@ -15,13 +15,12 @@ class LegalMoveChecker
     return false if piece.location == desired_location
     other_piece = board.piece_at(desired_location) || NullPiece.new
     return false if same_color?(piece, other_piece)
-    unless other_piece.class == NullPiece
-      return false unless piece.can_take?(desired_location)
+    return false unless if other_piece.class == NullPiece
+      piece.can_move?(desired_location) || can_castle?(piece, desired_location) || can_en_passant?(piece, desired_location)
     else
-      return false unless piece.can_move?(desired_location) || can_castle?(piece, desired_location) || can_en_passant?(piece, desired_location)
+      piece.can_take?(desired_location)
     end
-    return false if still_in_check?(piece, desired_location)
-    return false if piece_in_way?(piece, desired_location)
+    return false if still_in_check?(piece, desired_location) || piece_in_way?(piece, desired_location)
     true
   end
 
@@ -52,8 +51,8 @@ class LegalMoveChecker
   end
 
   def find_rook_can_castle(king, desired_location)
-    @rooks[king.color].find do |rook|
-      !king.moved? && !rook.moved? &&
+    return if king.moved?
+    @rooks[king.color].reject(&:moved?).find do |rook|
       correct_rook?(king.location, rook.location, desired_location)
     end
   end
@@ -76,6 +75,8 @@ class LegalMoveChecker
     return false if other_piece.color == piece.color
     squares_between(*@last_move).include?(desired_location)
   end
+
+  # methods below here need minimal refactoring
 
   def same_color?(piece, other_piece)
     piece.color == other_piece.color

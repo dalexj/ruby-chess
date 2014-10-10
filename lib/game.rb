@@ -12,16 +12,6 @@ class Game
     restart
   end
 
-  def get_piece(location)
-    board.piece_at(location) || NullPiece.new
-  end
-
-  def restart
-    @board = @generator.create
-    @checker = LegalMoveChecker.new(board)
-    @turn = :white
-  end
-
   def move(start_location, end_location)
     return unless your_move?(start_location, end_location)
 
@@ -41,9 +31,36 @@ class Game
     start_location != end_location && turn == get_piece(start_location).color && (not waiting_for_promotion?)
   end
 
-  def take_en_passant(piece, end_location)
-    return unless checker.can_en_passant?(piece, end_location)
+  def castle(king, desired_location)
+    return unless checker.can_castle?(king, desired_location)
+    puts "castling"
+    rook = find_rook_can_castle(king, desired_location)
+    rook.location = square_next_to_king(king.location, rook.location)
+  end
+
+  def promote_pawn(new_piece_type)
+    return unless waiting_for_promotion?
+    @turn = turn.to_s.split("_")[0].to_sym
     board.take_piece(checker.last_move[1])
+    board << new_piece_type.new(turn, checker.last_move[1])
+    change_turns
+  end
+
+  # methods below here need minimal refactoring
+
+  def take_piece(piece, end_location)
+    board.take_piece(end_location)
+    take_en_passant(piece, end_location)
+  end
+
+  def queue_promote_pawn
+    pawn = get_piece(checker.last_move[1])
+    return unless pawn.class == Pawn && ["8", "1"].include?(pawn.location[1])
+    @turn = "#{other_color(turn)}_promotion".to_sym
+  end
+
+  def waiting_for_promotion?
+    turn.to_s.include?("_promotion")
   end
 
   def get_legal_moves(piece)
@@ -58,37 +75,20 @@ class Game
     @turn = other_color(turn)
   end
 
-  def castle(king, desired_location)
-    return unless checker.can_castle?(king, desired_location)
-    puts "castling"
-    rook = find_rook_can_castle(king, desired_location)
-    rook.location = square_next_to_king(king.location, rook.location)
-    rook.move
-  end
-
-  def queue_promote_pawn
-    pawn = get_piece(checker.last_move[1])
-    return unless pawn.class == Pawn && ["8", "1"].include?(pawn.location[1])
-    @turn = "#{other_color(turn)}_promotion".to_sym
-  end
-
-  def promote_pawn(new_piece_type)
-    return unless waiting_for_promotion?
-    @turn = turn.to_s.split("_")[0].to_sym
+  def take_en_passant(piece, end_location)
+    return unless checker.can_en_passant?(piece, end_location)
     board.take_piece(checker.last_move[1])
-    board << new_piece_type.new(turn, checker.last_move[1])
-    change_turns
   end
 
-  def take_piece(piece, end_location)
-    board.take_piece(end_location)
-    take_en_passant(piece, end_location)
+  def get_piece(location)
+    board.piece_at(location) || NullPiece.new
   end
 
-  def waiting_for_promotion?
-    turn.to_s.include?("_promotion")
+  def restart
+    @board = @generator.create
+    @checker = LegalMoveChecker.new(board)
+    @turn = :white
   end
-
 end
 
 class NullPiece
