@@ -1,6 +1,7 @@
 require_relative 'test_helper'
 require_relative '../lib/board'
 require_relative '../lib/piece'
+require 'stringio'
 
 class BoardTest < Minitest::Test
   def test_empty_board_upon_initialize
@@ -39,7 +40,9 @@ class BoardTest < Minitest::Test
   def test_can_take_piece_at_location
     board = Board.new
     board << Piece.new(:black, "A1")
+    $stdout = StringIO.new
     board.take_piece("A1")
+    $stdout = STDOUT  
     assert_equal 0, board.pieces.count
   end
 
