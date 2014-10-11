@@ -48,17 +48,21 @@ class GUI < Gosu::Window
   end
 
   def draw_promotion_pieces(color)
-    add_to = {white: 4, black: 0}[color]
+    y, x = Piece.location_to_array_indexes(game.checker.last_move[1]).collect { |index| index * 90 + 45 }
+    rectangle(x, y, 360, 90)
     pieces = %w(q r b n).collect { |loc| "#{color[0]}#{loc}"}
-    pieces.reverse! if color == :white
 
     pieces.each_with_index do |file_loc, index|
-      find_piece_image(file_loc).draw(720, (index + add_to) * 90, 0)
+      find_piece_image(file_loc).draw((index * 90) + x, y, 0)
     end
   end
 
   def draw_background
     draw_quad(0, 0, @background, 0, 720, @background, 810, 0, @background, 810, 720,  @background)
+  end
+
+  def rectangle(x, y, width, height)
+    draw_quad(x, y, @background, x, height + y, @background, width + x, y, @background, width + x, height + y,  @background)
   end
 
   def needs_cursor?
