@@ -57,29 +57,33 @@ class LegalMoveChecker
     end
   end
 
-  def piece_in_way?(piece, desired_location)
-    return false unless [Rook, Bishop, Queen, Pawn].include?(piece.class)
-    squares = squares_between(piece.location, desired_location)
-    return unless squares
-    squares.any? do |square|
-      board.piece_at(square)
-    end
-  end
-
   def can_en_passant?(piece, desired_location)
     return false unless piece.class == Pawn
     return false unless last_move_two_spaces?
     return false unless piece.can_take?(desired_location)
-    other_piece = board.piece_at(@last_move[1])
+    other_piece = board.piece_at(last_move[1])
     return false unless other_piece.class == Pawn
     return false if other_piece.color == piece.color
-    squares_between(*@last_move).include?(desired_location)
+    squares_between(*last_move).include?(desired_location)
   end
 
   # methods below here need minimal refactoring
 
+  def piece_in_way?(piece, desired_location)
+    return false unless [Rook, Bishop, Queen, Pawn].include?(piece.class)
+    squares = squares_between(piece.location, desired_location)
+    return unless squares
+    squares.any? { |square| board.piece_at(square) }
+  end
+
+  private
+
   def same_color?(piece, other_piece)
     piece.color == other_piece.color
+  end
+
+  def select_pieces(*squares)
+    squares.collect { |square| board.piece_at(square) }
   end
 
   def last_move_two_spaces?
@@ -91,11 +95,8 @@ class LegalMoveChecker
   end
 
   def select_rooks
-    @rooks = {white: [board.piece_at("A1"), board.piece_at("H1")],
-              black: [board.piece_at("A8"), board.piece_at("H8")]}
+    @rooks = {white: select_pieces("A1", "H1"), black: select_pieces("A8", "H8")}
   end
-
-  private
 
   attr_reader :board
 end

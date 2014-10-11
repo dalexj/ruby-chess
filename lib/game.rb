@@ -14,21 +14,33 @@ class Game
 
   def move(start_location, end_location)
     return unless your_move?(start_location, end_location)
-
+    return if start_location == end_location
     return puts "illegal move" unless checker.legal_move?(get_piece(start_location), end_location)
 
-    take_piece(get_piece(start_location), end_location)
-
-    castle(get_piece(start_location), end_location)
-    get_piece(start_location).move
-    get_piece(start_location).location = end_location
+    use_piece(get_piece(start_location), end_location)
     change_turns
     checker.last_move = [start_location, end_location]
     queue_promote_pawn
   end
 
+  def use_piece(piece, location)
+    take_piece(piece, location)
+    move_piece(piece, location)
+  end
+
+  def take_piece(piece, end_location)
+    board.take_piece(end_location)
+    take_en_passant(piece, end_location)
+  end
+
+  def move_piece(piece, location)
+    castle(piece, location)
+    piece.move
+    piece.location = location
+  end
+
   def your_move?(start_location, end_location)
-    start_location != end_location && turn == get_piece(start_location).color && (not waiting_for_promotion?)
+    turn == get_piece(start_location).color
   end
 
   def castle(king, desired_location)
@@ -44,13 +56,6 @@ class Game
     board.take_piece(checker.last_move[1])
     board << new_piece_type.new(turn, checker.last_move[1])
     change_turns
-  end
-
-  # methods below here need minimal refactoring
-
-  def take_piece(piece, end_location)
-    board.take_piece(end_location)
-    take_en_passant(piece, end_location)
   end
 
   def queue_promote_pawn
