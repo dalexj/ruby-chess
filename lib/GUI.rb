@@ -4,11 +4,20 @@ require_relative 'game'
 class GUI < Gosu::Window
   attr_reader :game
   def initialize
-    super(810, 720, false)
+    super(720, 720, false)
     self.caption = "Alex's Swaggin' Chess"
     @game = Game.new
-    @background = Gosu::Color::GRAY
+    # @background = Gosu::Color::WHITE
+    @background = 0xffdb9370
     create_images
+    game.move("E2", "E4")
+    game.move("F7", "F5")
+    game.move("E4", "F5")
+    game.move("G7", "G6")
+    game.move("F5", "G6")
+    game.move("G8", "F6")
+    game.move("G6", "H7")
+    game.move("H8", "G8")
   end
 
   def button_down(id)
@@ -39,22 +48,11 @@ class GUI < Gosu::Window
   end
 
   def draw
-    draw_background
     @board_image.draw(0, 0, 0)
     draw_pieces
     draw_possible_moves
     draw_selected_piece
     draw_promotion_pieces(game.turn.to_s.split("_")[0].to_sym) if game.waiting_for_promotion?
-  end
-
-  def draw_promotion_pieces(color)
-    y, x = Piece.location_to_array_indexes(game.checker.last_move[1]).collect { |index| index * 90 + 45 }
-    rectangle(x, y, 360, 90)
-    pieces = %w(q r b n).collect { |loc| "#{color[0]}#{loc}"}
-
-    pieces.each_with_index do |file_loc, index|
-      find_piece_image(file_loc).draw((index * 90) + x, y, 0)
-    end
   end
 
   def draw_background
@@ -104,10 +102,10 @@ class GUI < Gosu::Window
     @piece_images = piece_image_locations.collect { |path| Gosu::Image.new(self, "assets/#{path}.png", true) }
   end
 
-  def location_of_mouse # get chess-location ("A1") for the x and y of the mouse
-    row = 8 - (self.mouse_y / 90).to_i
-    col = ((self.mouse_x / 90).to_i + 65).chr
-    "#{col}#{row}"
+  def location_of_mouse(start_x = 0, start_y = 0) # get chess-location ("A1") for the x and y of the mouse
+    x = 8 - ((self.mouse_y - start_x) / 90).to_i
+    y = ((self.mouse_x - start_y) / 90).to_i + 65
+    "#{y.chr}#{x}"
   end
 
   def find_piece_image(file_loc)
@@ -119,15 +117,39 @@ class GUI < Gosu::Window
   end
 
   def select_promotion_piece
-    return unless location_of_mouse[0] == "I" # grey strip to the right of board
+    loc = location_of_mouse(*promotion_pieces_start_location)
+    return unless loc[1] == "8"
     pieces = [Queen, Rook, Bishop, Knight]
-    if game.turn.to_s.split("_")[0].to_sym == :white
-      add_to = -1
-    else
-      add_to = -5
-      pieces.reverse!
-    end
-    type = pieces[location_of_mouse[1].to_i + add_to]
+    type = pieces[loc[0].ord - 65]
     game.promote_pawn(type) if type
+  end
+
+  def draw_promotion_pieces(color)
+    y, x = promotion_pieces_start_location
+    rectangle(x, y, 360, 90)
+    pieces = %w(q r b n).collect { |loc| "#{color[0]}#{loc}"}
+
+    pieces.each_with_index do |file_loc, index|
+      highlight = mouse_over_piece?(index) ? 0xff999999 : 0xffffffff
+      find_piece_image(file_loc).draw((index * 90) + x, y, 0, 1, 1, highlight)
+    end
+  end
+
+  def mouse_over_piece?(index)
+    start = location_of_mouse(*promotion_pieces_start_location)
+    start[1] == "8" && %w(A B C D)[index] == start[0]
+  end
+
+  def promotion_pieces_start_location
+    start = Piece.location_to_array_indexes(game.checker.last_move[1]).collect { |index| index * 90 + 45 }
+
+    until start[1] < 360
+      start[1] = start[1] - 90
+    end
+
+    until start[0] < 630
+      start[0] = start[0] - 90
+    end
+    start
   end
 end
