@@ -46,7 +46,7 @@ class Game
   def castle(king, desired_location)
     return unless checker.can_castle?(king, desired_location)
     puts "castling"
-    rook = find_rook_can_castle(king, desired_location)
+    rook = checker.find_rook_can_castle(king, desired_location)
     rook.location = square_next_to_king(king.location, rook.location)
   end
 
