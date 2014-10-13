@@ -1,4 +1,7 @@
 require 'gosu'
+require 'pusher-client'
+require 'pusher'
+require 'json'
 require_relative 'game'
 
 class GUI < Gosu::Window
@@ -9,6 +12,19 @@ class GUI < Gosu::Window
     @game = Game.new
     @background = 0xffdb9370 # some brownish color
     create_images
+    create_socket
+  end
+
+  def create_socket
+    Pusher.url = "http://aa791892d8f69fa95e4e:fd0081e3a9aefc67456a@api.pusherapp.com/apps/92791"
+
+    socket = PusherClient::Socket.new('aa791892d8f69fa95e4e', {secret: "fd0081e3a9aefc67456a"})
+    socket.connect(true)
+    socket.subscribe("chess_channel1")
+    socket["chess_channel1"].bind("move") do |data|
+      parsed_data = JSON.parse(data)
+      game.move(parsed_data["from"], parsed_data["to"])
+    end
   end
 
   def button_down(id)
@@ -24,6 +40,7 @@ class GUI < Gosu::Window
 
   def make_move
     game.move(@selected_piece.location, location_of_mouse)
+    Pusher["chess_channel1"].trigger("move", { from: @selected_piece.location, to: location_of_mouse  })
     @selected_piece = nil
   end
 
