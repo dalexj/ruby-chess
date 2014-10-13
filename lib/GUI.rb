@@ -7,17 +7,8 @@ class GUI < Gosu::Window
     super(720, 720, false)
     self.caption = "Alex's Swaggin' Chess"
     @game = Game.new
-    # @background = Gosu::Color::WHITE
-    @background = 0xffdb9370
+    @background = 0xffdb9370 # some brownish color
     create_images
-    game.move("E2", "E4")
-    game.move("F7", "F5")
-    game.move("E4", "F5")
-    game.move("G7", "G6")
-    game.move("F5", "G6")
-    game.move("G8", "F6")
-    game.move("G6", "H7")
-    game.move("H8", "G8")
   end
 
   def button_down(id)
@@ -136,8 +127,8 @@ class GUI < Gosu::Window
   end
 
   def mouse_over_piece?(index)
-    start = location_of_mouse(*promotion_pieces_start_location)
-    start[1] == "8" && %w(A B C D)[index] == start[0]
+    location = location_of_mouse(*promotion_pieces_start_location)
+    location[1] == "8" && %w(A B C D)[index] == location[0]
   end
 
   def promotion_pieces_start_location
