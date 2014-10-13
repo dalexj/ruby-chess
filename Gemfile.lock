@@ -18,5 +18,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  pusher
-  pusher-client
+  pusher (= 0.14.1)
+  pusher-client (= 0.6.0)
