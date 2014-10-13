@@ -39,8 +39,8 @@ class GUI < Gosu::Window
   end
 
   def make_move
-    game.move(@selected_piece.location, location_of_mouse)
     Pusher["chess_channel1"].trigger("move", { from: @selected_piece.location, to: location_of_mouse  })
+    game.move(@selected_piece.location, location_of_mouse)
     @selected_piece = nil
   end
 
